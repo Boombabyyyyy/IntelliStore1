@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IntelliStore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="static/css/aos.css">
+
+    <link rel="stylesheet" href="static/css/style.css">
+    
+  </head>
+  <body>
+  
+    <div class="site-wrap">
+      <header class="site-navbar" role="banner">
+        <div class="site-navbar-top">
+          <div class="container">
+            <div class="row align-items-center">
+              
+              <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+                <form action="{{url_for('shop')}}" method="POST" class="site-block-top-search">
+                  <input type="text" class="form-control border-0" id="search" name="keyword" placeholder="Search Products..">
+                  <span class="icon icon-search2"></span>
+                  <input type="submit" hidden />
+              </form>
+              </div>
+  
+              <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+                <div class="site-logo">
+                  <a href="/" class="js-logo-clone">IntelliStore</a>
+                </div>
+              </div>
+              <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+                <div class="site-top-icons">
+                  <ul>
+                    {% if g.user["user_id"] %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('profile')}}">{{ g.user['firstname'] }} {{ g.user['lastname'] }} <span class="icon icon-person"></span></a>
+                    </li>
+                    {% else %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('login')}}"><span class="icon icon-person"></span></a>
+                    </li>
+                    {% endif %}
+  
+                  
+                    <li><a href="{{url_for('orders')}}"><span class="icon icon-receipt"></span></a></li>
+                    <li>
+                      <a href="{{url_for('cart')}}" class="site-cart">
+                        <span class="icon icon-shopping_cart"></span>
+                        <span class="count">{{ g.cartdict|length }}</span>
+                      </a>
+                    </li> 
+                    <li class="d-inline-block d-md-none ml-md-0"><a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a></li>
+                  </ul>
+                </div> 
+              </div>
+  
+            </div>
+          </div>
+        </div> 
+        <nav class="site-navigation text-right text-md-center" role="navigation">
+          <div class="container">
+            <ul class="site-menu js-clone-nav d-none d-md-block">
+  
+              <li><a href="/">Home</a></li>
+              <li><a href="shop">Shop</a></li>
+              <li class="has-children">
+                <a href="shop">shop By Category</a>
+                <ul class="dropdown">
+                  {%for category in g.cats %}
+                  <li><a href="/shopbycategory?category_id={{category['category_id']}}">{{category['name']}}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li><a href="about.html">About</a></li>
+              {% if g.user["isadmin"]==1 %}
+              <li><a href="admin">Admin Panel</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+  
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="index.html">Shop</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">{{ product['name'] }}</strong></div>
+        </div>
+      </div>
+    </div>  
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <a href="/shop_single?product_id={{ product['product_id'] }}"><img src="data:;base64,{{ product['image'] }}" width="400" height="400" alt="Product Image" class="img-fluid"></a>
+          </div>
+          <div class="col-md-6">
+            <form action="{{url_for('addtocart')}}" method="POST" id="{{product['product_id']}}" name="{{product['product_id']}}">
+              <input type="hidden" id="product_id" name="product_id" value={{ product['product_id'] }}>
+              <input type="hidden" id="stock" name="stock" value={{ product['stock'] }}>
+              <input type="hidden" id="name" name="name" value="{{ product['name'] }}">
+              <input type="hidden" id="category_id" name="category_id" value={{ product['category_id'] }}>
+            <h2 class="text-black">{{ product['name'] }}</h2>
+            <p>{{ product['description'] }}</p>
+            <p><strong class="text-primary h4">₹{{ product['price'] }}</strong></p>
+
+            <p>Date of Manufacturing: {{ product['mfg'] }}</p>
+            <p>Date of Expiry: {{ product['exp'] }}</p>
+            <div class="mb-5">
+
+              <div class="input-group mb-3" style="max-width: 120px;">
+                {% if product['stock'] < 3 %}
+                {% set max = product['stock'] %}
+              {% else %}
+                {% set max = 3 %}
+              {% endif %}
+              {% if product['stock'] != 0 %}
+              
+              <div class="input-group mb-3" style="max-width: 120px; text-align: center; margin-left: auto; margin-right: auto;" align="center">
+                <p></p>
+                <input type="number" id="qty" name="qty" max="{{max}}" min="1" class="form-control text-center" value="1" onkeydown="return false" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                <button type="submit" form="{{product['product_id']}}" class="btn btn-primary btn-sm">ADD<span class="icon icon-cart-plus"></span></button>
+                
+              </div>
+              {% else %}
+              <button type="button" disabled class="btn btn-link btn-sm"><p class="text-danger font-weight-bold">Out Of Stock :&#40;<span class="icon icon-emoji-frown"></span></p></button>
+
+              <p class="text-primary font-weight-bold">Check back tomorrow!</p>
+              {% endif %}
+            </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+
+    <div class="site-section block-3 site-blocks-2 bg-light">
+      <div class="container">
+        <div class="row justify-content-center">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer border-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="row">
+              <div class="col-md-12">
+                <h3 class="footer-heading mb-4">Navigations</h3>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/shop">Shop</a></li>
+                  <li><a href="/about.html">About</a></li>
+                  
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/profile">Your Profile</a></li>
+                  <li><a href="/orders">Your Orders</a></li>
+                  <li><a href="/cart">Your Cart</a></li>
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/login">Sign In</a></li>
+                  <li><a href="/register">Sign Up</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <h3 class="footer-heading mb-4">Promo</h3>
+            <a href="#" class="block-6">
+              <img src="static/images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+              <h3 class="font-weight-light  mb-0">Finding Your Perfect Groceries</h3>
+              <p>Promo from  August 15 &mdash; 25, 2023</p>
+              <p>Use code NEW10 on your first order!</p>
+            </a>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <strong><li class="name">Azfar Faheem Mustafa</li></strong>
+                <li class="address">203 Fake St. Mountain View, Mumbai, Maharashtra, India</li>
+                <li class="phone"><a href="tel://+917977573428">+91 7977573428</a></li>
+                <li class="email">21f2000478@ds.study.iitm.ac.in</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This HTML template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="static/js/jquery-3.3.1.min.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+  <script src="static/js/popper.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/owl.carousel.min.js"></script>
+  <script src="static/js/jquery.magnific-popup.min.js"></script>
+  <script src="static/js/aos.js"></script>
+
+  <script src="static/js/main.js"></script>
+    
+  </body>
+</html>

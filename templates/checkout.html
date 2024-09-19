@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IntelliStore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="static/css/aos.css">
+
+    <link rel="stylesheet" href="static/css/style.css">
+    
+  </head>
+  <body>
+  
+    <div class="site-wrap">
+      <header class="site-navbar" role="banner">
+        <div class="site-navbar-top">
+          <div class="container">
+            <div class="row align-items-center">
+              
+              <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+                <form action="{{url_for('shop')}}" method="POST" class="site-block-top-search">
+                  <input type="text" class="form-control border-0" id="search" name="keyword" placeholder="Search Products..">
+                  <span class="icon icon-search2"></span>
+                  <input type="submit" hidden />
+              </form>
+              </div>
+  
+              <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+                <div class="site-logo">
+                  <a href="/" class="js-logo-clone">IntelliStore</a>
+                </div>
+              </div>
+              <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+                <div class="site-top-icons">
+                  <ul>
+                    {% if g.user["user_id"] %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('profile')}}">{{ g.user['firstname'] }} {{ g.user['lastname'] }} <span class="icon icon-person"></span></a>
+                    </li>
+                    {% else %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('login')}}"><span class="icon icon-person"></span></a>
+                    </li>
+                    {% endif %}
+  
+                  
+                    <li><a href="{{url_for('orders')}}"><span class="icon icon-receipt"></span></a></li>
+                    <li>
+                      <a href="{{url_for('cart')}}" class="site-cart">
+                        <span class="icon icon-shopping_cart"></span>
+                        <span class="count">{{ g.cartdict|length }}</span>
+                      </a>
+                    </li> 
+                    <li class="d-inline-block d-md-none ml-md-0"><a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a></li>
+                  </ul>
+                </div> 
+              </div>
+  
+            </div>
+          </div>
+        </div> 
+        <nav class="site-navigation text-right text-md-center" role="navigation">
+          <div class="container">
+            <ul class="site-menu js-clone-nav d-none d-md-block">
+  
+              <li><a href="/">Home</a></li>
+              <li><a href="shop">Shop</a></li>
+              <li class="has-children">
+                <a href="shop">shop By Category</a>
+                <ul class="dropdown">
+                  {%for category in g.cats %}
+                  <li><a href="/shopbycategory?category_id={{category['category_id']}}">{{category['name']}}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li><a href="about.html">About</a></li>
+              {% if g.user["isadmin"]==1 %}
+              <li><a href="admin">Admin Panel</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+  
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="index.html">Home</a> <span class="mx-2 mb-0">/</span> <a href="cart.html">Cart</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Checkout</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+
+          <div class="col-md-12">
+
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Order Details</h2>
+                <div class="p-3 p-lg-5 border">
+                  <p class="h5 mb3 text-black">{{ g.user['firstname'] }} {{ g.user['lastname'] }}</p>
+                  <p class="h6 mb3 text-grey">{{ address['mobile'] }}</p>
+                  <p class="h6 mb3 text-grey">{{ address['Address'] }}</p>
+
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Your Order</h2>
+                <div class="p-3 p-lg-5 border">
+                  <table class="table site-block-order-table mb-5">
+                    <thead>
+                      <th>Product</th>
+                      <th>Total</th>
+                    </thead>
+                    <tbody>
+                      {% for product in cart_products %}
+                      {% set total=product['price']*g.cartdict[product['product_id']] %}
+                      <tr>
+                        <td>{{product['name']}}<strong class="mx-2">x</strong>{{g.cartdict[product['product_id']]}}</td>
+                        <td>Rs.{{ total }}</td>
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                        <td class="text-black font-weight-bold"><strong>Rs.{{subtotal}}</strong></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>GST &#40;18%&#41;</strong></td>
+                        <td class="text-black font-weight-bold"><strong>Rs.{{gst}}</strong></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Shipping</strong></td>
+                        <td class="text-success font-weight-bold"><strong>FREE</strong></td>
+                      </tr>
+                      {% if discount==0 %}
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                        <td class="text-black font-weight-bold"><strong>Rs.{{grandtotal}}</strong></td>
+                      </tr>
+                      {% else %}
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                        <td class="text-black font-weight-bold"><strong>Rs.{{grandtotal}}</strong></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Coupon discount</strong></td>
+                        <td class="text-success font-weight-bold"><strong>Rs.{{discount}}</strong></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Total Payable</strong></td>
+                        <td class="text-black font-weight-bold"><strong>Rs.{{newtotal}}</strong></td>
+                      </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+
+                  <div class="border p-3 mb-3">
+                    <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false" aria-controls="collapsebank">Direct Bank Transfer</a></h3>
+
+                    <div class="collapse" id="collapsebank">
+                      <div class="py-2">
+                        <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border p-3 mb-3">
+                    <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="false" aria-controls="collapsecheque">Cheque Payment</a></h3>
+
+                    <div class="collapse" id="collapsecheque">
+                      <div class="py-2">
+                        <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border p-3 mb-5">
+                    <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsepaypal" role="button" aria-expanded="false" aria-controls="collapsepaypal">Paypal</a></h3>
+
+                    <div class="collapse" id="collapsepaypal">
+                      <div class="py-2">
+                        <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <form action="{{url_for('placeorder')}}" method="POST">
+                    <input type="hidden" id="subtotal" name="subtotal" value={{ subtotal }}>
+                    <input type="hidden" id="gst" name="gst" value={{ gst }}>
+                    <input type="hidden" id="grandtotal" name="grandtotal" value={{ grandtotal }}>
+                    <input type="hidden" id="discount" name="discount" value={{ discount }}>
+                    <input type="hidden" id="address" name="address" value="{{ address['Address'] }}">
+                    <input type="hidden" id="mobile" name="mobile" value={{ address['mobile'] }}>
+                    <input type="hidden" id="payable" name="payable" value={{ newtotal }}>
+                    <input type="hidden" id="user_id" name="user_id" value={{ g.user["user_id"]|int }}>
+                    <button class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- </form> -->
+      </div>
+    </div>
+
+    <footer class="site-footer border-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="row">
+              <div class="col-md-12">
+                <h3 class="footer-heading mb-4">Navigations</h3>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/shop">Shop</a></li>
+                  <li><a href="/about.html">About</a></li>
+                  
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/profile">Your Profile</a></li>
+                  <li><a href="/orders">Your Orders</a></li>
+                  <li><a href="/cart">Your Cart</a></li>
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/login">Sign In</a></li>
+                  <li><a href="/register">Sign Up</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <h3 class="footer-heading mb-4">Promo</h3>
+            <a href="#" class="block-6">
+              <img src="static/images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+              <h3 class="font-weight-light  mb-0">Finding Your Perfect Groceries</h3>
+              <p>Promo from  August 15 &mdash; 25, 2023</p>
+              <p>Use code NEW10 on your first order!</p>
+            </a>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <strong><li class="name">Azfar Faheem Mustafa</li></strong>
+                <li class="address">203 Fake St. Mountain View, Mumbai, Maharashtra, India</li>
+                <li class="phone"><a href="tel://+917977573428">+91 7977573428</a></li>
+                <li class="email">21f2000478@ds.study.iitm.ac.in</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This HTML template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="static/js/jquery-3.3.1.min.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+  <script src="static/js/popper.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/owl.carousel.min.js"></script>
+  <script src="static/js/jquery.magnific-popup.min.js"></script>
+  <script src="static/js/aos.js"></script>
+
+  <script src="static/js/main.js"></script>
+    
+  </body>
+</html>

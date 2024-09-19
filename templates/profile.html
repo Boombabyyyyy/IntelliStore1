@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IntelliStore</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="static/css/aos.css">
+
+    <link rel="stylesheet" href="static/css/style.css">
+    
+  </head>
+  <body>
+    <div class="site-wrap">
+      <header class="site-navbar" role="banner">
+        <div class="site-navbar-top">
+          <div class="container">
+            <div class="row align-items-center">
+              
+              <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+                <form action="{{url_for('shop')}}" method="POST" class="site-block-top-search">
+                  <input type="text" class="form-control border-0" id="search" name="keyword" placeholder="Search Products..">
+                  <span class="icon icon-search2"></span>
+                  <input type="submit" hidden />
+              </form>
+              </div>
+  
+              <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+                <div class="site-logo">
+                  <a href="/" class="js-logo-clone">IntelliStore</a>
+                </div>
+              </div>
+              <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+                <div class="site-top-icons">
+                  <ul>
+                    {% if g.user["user_id"] %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('profile')}}">{{ g.user['firstname'] }} {{ g.user['lastname'] }} <span class="icon icon-person"></span></a>
+                    </li>
+                    {% else %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('login')}}"><span class="icon icon-person"></span></a>
+                    </li>
+                    {% endif %}
+  
+                  
+                    <li><a href="{{url_for('orders')}}"><span class="icon icon-receipt"></span></a></li>
+                    <li>
+                      <a href="{{url_for('cart')}}" class="site-cart">
+                        <span class="icon icon-shopping_cart"></span>
+                        <span class="count">{{ g.cartdict|length }}</span>
+                      </a>
+                    </li> 
+                    <li class="d-inline-block d-md-none ml-md-0"><a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a></li>
+                  </ul>
+                </div> 
+              </div>
+  
+            </div>
+          </div>
+        </div> 
+        <nav class="site-navigation text-right text-md-center" role="navigation">
+          <div class="container">
+            <ul class="site-menu js-clone-nav d-none d-md-block">
+  
+              <li><a href="/">Home</a></li>
+              <li><a href="shop">Shop</a></li>
+              <li class="has-children">
+                <a href="shop">shop By Category</a>
+                <ul class="dropdown">
+                  {%for category in g.cats %}
+                  <li><a href="/shopbycategory?category_id={{category['category_id']}}">{{category['name']}}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li><a href="about.html">About</a></li>
+              {% if g.user["isadmin"]==1 %}
+              <li><a href="admin">Admin Panel</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+      
+      <div class="bg-light py-3">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12 mb-0"><a href="index.html"></a> <span class="mx-2 mb-0"></span> <strong class="text-black">PROFILE</strong></div>
+          </div>
+        </div>
+      </div>
+    {% if g.user["user_id"] %}
+    <div class="site-section">
+      
+      <div class="container" style="align: center;">
+        
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+          <div class="col-md-6">
+            <span class="d-block text-primary h6 text-uppercase" style="text-align: center;">Update Profile</span>
+            <form action="{{url_for('updateuser')}}" method="POST">
+              
+              <div class="p-3 p-lg-5 border">
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="firstname" class="text-black">Firstname<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="firstname" name="firstname" required value={{g.user['firstname']}} >
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="lastname" class="text-black">Lastname<span class="text-danger"></span></label>
+                    <input type="text" class="form-control" id="lastname" name="lastname" value={{g.user['lastname']}}>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="username" class="text-black">Email &#40;This will be your username&#41;<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="username" name="username" required value={{g.user['email']}} readonly>
+                  </div>
+                </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="pw" class="text-black">Password<span class="text-danger">*</span></label>
+                      <input type="password" class="form-control" id="pw" name="pw" required placeholder="Enter new password here">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="mobile" class="text-black">Mobile Number &#40;10 digit - Indian&#41;<span class="text-danger">*</span></label>
+                      <input type="text" pattern="[789][0-9]{9}" class="form-control" id="mobile" name="mobile" required value={{g.user['mobile']}}>
+                    </div>
+                  </div>
+                <div class="form-group row">
+                  <div class="col-lg-12">
+                    <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update Profile and Password">
+                  </div>
+                  <a href="{{url_for('login')}}" style="margin-left: auto; margin-right: auto; margin-top:20px;"><button type="button" class="btn btn-link btn-sm">Sign Out</button></a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="col-md-5 ml-auto">
+            <span class="d-block text-primary h6 text-uppercase" style="text-align: center;">Address List</span>
+            <div class="col-md-18">
+              {% for address in addresses %}
+              <form></form>
+              <form action="" method="post" id="{{address['address_id']}}" name="{{address['address_id']}}">
+            <div class="p-1 p-lg-1 border">
+              <b>{{ address['mobile'] }}
+              <p></p>
+              {{ address['Address'] }}
+            </b>
+              <input type="hidden" id="address_id" name="address_id" value={{address['address_id']}}>
+            </div>
+            <br>
+          </form>
+              {% endfor %}
+              <span class="d-block text-primary h6 text-uppercase" style="text-align: center;">Add Address</span>
+              <form action="{{url_for('addaddress')}}" method="POST">
+                <input type="hidden" id="user_id" name="user_id" value={{g.user['user_id']}}>
+                <div class="p-3 p-lg-5 border">
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="address1" class="text-black">Address Line 1<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="address1" name="address1" required>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="address2" class="text-black">Address Line 2</label>
+                      <input type="text" class="form-control" id="address2" name="address2">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="state" class="text-black">State<span class="text-danger">*</span></label>
+                      <select name="state" id="state" class="form-control">
+                        <option value="" disabled selected>Select your option</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Dadar and Nagar Haveli">Dadar and Nagar Haveli</option>
+                        <option value="Daman and Diu">Daman and Diu</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Puducherry">Puducherry</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="city" class="text-black">city<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="pincode" class="text-black">Pincode<span class="text-danger">*</span></label>
+                      <input type="text" pattern="[0-9]{6}" maxlength="6" class="form-control" id="pincode" name="pincode">
+                    </div>
+                  </div>
+                    <div class="form-group row">
+                      <div class="col-md-12">
+                        <label for="mobile" class="text-black">Mobile Number &#40;10 digit - Indian&#41;<span class="text-danger">*</span></label>
+                        <input type="text" pattern="[789][0-9]{9}" class="form-control" id="mobile" name="mobile" required value={{g.user['mobile']}}>
+                      </div>
+                    </div>
+                  <div class="form-group row">
+                    <div class="col-lg-12">
+                      <input type="submit" class="btn btn-primary btn-lg btn-block" value="Add Address">
+                    </div>
+                  </div>
+                </div>
+              </form>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <br>
+    <br>
+    <div class="container" style="align: center;">
+      <h3 class=text-danger>Please login to view and manage your profile!</h3>
+      <br>
+      <a href="{{url_for('login')}}" style="margin-left: auto; margin-right: auto; margin-top:50px;"><button type="button" class="btn btn-primary">Click here to login</button></a>
+    </div>
+    <br>
+    <br>
+    {% endif %}
+  </div>
+  
+
+  <footer class="site-footer border-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="footer-heading mb-4">Navigations</h3>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about.html">About</a></li>
+                
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/profile">Your Profile</a></li>
+                <li><a href="/orders">Your Orders</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/login">Sign In</a></li>
+                <li><a href="/register">Sign Up</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-4">Promo</h3>
+          <a href="#" class="block-6">
+            <img src="static/images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+            <h3 class="font-weight-light  mb-0">Finding Your Perfect Groceries</h3>
+            <p>Promo from  August 15 &mdash; 25, 2023</p>
+            <p>Use code NEW10 on your first order!</p>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="block-5 mb-5">
+            <h3 class="footer-heading mb-4">Contact Info</h3>
+            <ul class="list-unstyled">
+              <strong><li class="name">Azfar Faheem Mustafa</li></strong>
+              <li class="address">203 Fake St. Mountain View, Mumbai, Maharashtra, India</li>
+              <li class="phone"><a href="tel://+917977573428">+91 7977573428</a></li>
+              <li class="email">21f2000478@ds.study.iitm.ac.in</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5 mt-5 text-center">
+        <div class="col-md-12">
+          <p>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This HTML template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="static/js/jquery-3.3.1.min.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+  <script src="static/js/popper.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/owl.carousel.min.js"></script>
+  <script src="static/js/jquery.magnific-popup.min.js"></script>
+  <script src="static/js/aos.js"></script>
+
+  <script src="static/js/main.js"></script>
+    
+  </body>
+</html>

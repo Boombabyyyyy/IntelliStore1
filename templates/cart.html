@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IntelliStore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="static/css/aos.css">
+
+    <link rel="stylesheet" href="static/css/style.css">
+    
+  </head>
+  <body>
+  
+    <div class="site-wrap">
+      <header class="site-navbar" role="banner">
+        <div class="site-navbar-top">
+          <div class="container">
+            <div class="row align-items-center">
+              
+              <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+                <form action="{{url_for('shop')}}" method="POST" class="site-block-top-search">
+                  <input type="text" class="form-control border-0" id="search" name="keyword" placeholder="Search Products..">
+                  <span class="icon icon-search2"></span>
+                  <input type="submit" hidden />
+              </form>
+              </div>
+  
+              <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+                <div class="site-logo">
+                  <a href="/" class="js-logo-clone">IntelliStore</a>
+                </div>
+              </div>
+              <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+                <div class="site-top-icons">
+                  <ul>
+                    {% if g.user["user_id"] %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('profile')}}">{{ g.user['firstname'] }} {{ g.user['lastname'] }} <span class="icon icon-person"></span></a>
+                    </li>
+                    {% else %}
+                    <li>
+                      <p></p>
+                      <a href="{{url_for('login')}}"><span class="icon icon-person"></span></a>
+                    </li>
+                    {% endif %}
+  
+                  
+                    <li><a href="{{url_for('orders')}}"><span class="icon icon-receipt"></span></a></li>
+                    <li>
+                      <a href="{{url_for('cart')}}" class="site-cart">
+                        <span class="icon icon-shopping_cart"></span>
+                        <span class="count">{{ g.cartdict|length }}</span>
+                      </a>
+                    </li> 
+                    <li class="d-inline-block d-md-none ml-md-0"><a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a></li>
+                  </ul>
+                </div> 
+              </div>
+  
+            </div>
+          </div>
+        </div> 
+        <nav class="site-navigation text-right text-md-center" role="navigation">
+          <div class="container">
+            <ul class="site-menu js-clone-nav d-none d-md-block">
+  
+              <li><a href="/">Home</a></li>
+              <li><a href="shop">Shop</a></li>
+              <li class="has-children">
+                <a href="shop">shop By Category</a>
+                <ul class="dropdown">
+                  {%for category in g.cats %}
+                  <li><a href="/shopbycategory?category_id={{category['category_id']}}">{{category['name']}}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li><a href="about.html">About</a></li>
+              {% if g.user["isadmin"]==1 %}
+              <li><a href="admin">Admin Panel</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+        
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="index.html">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Cart</strong></div>
+        </div>
+      </div>
+    </div>
+    {% if g.cartdict|length == 0 %}
+    <div class="site-section">
+      <div class="container">
+        <div class="row mb-5">
+        <h3 class="text-black h4 text-uppercase">It's Lonely here, No products added ☹️</h3>
+          </div>
+          <div class="row mb-5">
+          <a href="{{url_for('shop')}}"><button class="btn btn-outline-primary btn-block">Continue Shopping</button></a>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+    <div class="site-section">
+      <div class="container">
+        <div class="row mb-5">
+          <form class="col-md-12" action="{{url_for('checkout')}}" method="POST" name="checkout" id="checkout">
+            {% if discount!=0 %}
+            <input type="hidden" id="code1" name="code1" value="NEW10">
+            {% else %}
+            <input type="hidden" id="code1" name="code1" value="blahblah">
+            {% endif %}
+            <div class="form-group row">
+              <div class="col-md-12">
+                <span class="icon icon-map-marker text-primary" style="font-size:30px;"> <label class="text-black h4" for="address">SELECT DELIVERY ADDRESS</label></span>
+                <select name="address" id="address" class="form-control" required>
+                  {%for address in addresses %}
+                  <option value={{address['address_id']}}>{{address['mobile']}} --  {{address['Address']}}</option>
+                  {% endfor %}
+                </select>
+                <a href="/profile">Add new address</a>
+              </div>
+            </div>
+            <div class="site-blocks-table">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="product-thumbnail">Image</th>
+                    <th class="product-name">Product</th>
+                    <th class="product-price">Price</th>
+                    <th class="product-quantity">Quantity</th>
+                    <th class="product-total">Total</th>
+                    <th class="product-remove">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for product in cart_products %}
+                {% set total=product['price']*g.cartdict[product['product_id']] %}
+                  <tr>
+                    <td class="product-thumbnail">
+                      <a href="/shop_single?product_id={{ product['product_id'] }}"><img src="data:;base64,{{ product['image'] }}" width="150" height="150" alt="Product Image" class="img-fluid"></a>
+                    </td>
+                    <td class="product-name">
+                      <h2 class="h5 text-black">{{product["name"]}}</h2>
+                    </td>
+                    <td><b>{{product["price"]}} {{product["unit"]}}</b></td>
+                    <td>
+                      {% if product['stock'] < 3 %}
+                      {% set max = product['stock'] %}
+                    {% else %}
+                      {% set max = 3 %}
+                    {% endif %}
+                    
+                    <div class="input-group mb-3" style="max-width: 120px; text-align: center; margin-left: auto; margin-right: auto;" align="center">
+                      <p></p>
+                      <input type="number" disabled id="qty" name="qty" max="{{max}}" min="1" class="form-control text-center" value="{{g.cartdict[product['product_id']]}}" onkeydown="return false" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    </div>
+                    </td>
+                    <td><b>{{total}} Rs</b></td>
+                    <td><a href="/deletecartproduct?product_id={{ product['product_id'] }}" class="btn btn-danger btn-sm">X</a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row mb-5">
+              <div class="col-md-6">
+                <a href="{{url_for('shop')}}"><button class="btn btn-outline-primary btn-block">Continue Shopping</button></a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+              <form action="{{url_for('cart')}}" method="POST" name="coupon" id="coupon">
+                <label class="text-black h4" for="coupon">Coupon</label>
+                <p>Enter your coupon code if you have one.</p>
+              </div>
+              <div class="col-md-8 mb-3 mb-md-0">
+                <input type="text" class="form-control py-3" id="code" name="code" placeholder="Coupon Code">
+              </div>
+              <div class="col-md-4">
+                <button type="submit" form="coupon" class="btn btn-primary">Apply Coupon</button>
+              </div>
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  {% if message=="Coupon Applied Sucessfully!" %}
+                    <br>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <span class="text-black" style="margin-left: auto; margin-right: auto;">{{ message }}</span>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </div>
+                  {% endif %}
+                  {% if message=="Invalid Coupon Code! :(" %}
+                  <br>
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="text-black" style="margin-left: auto; margin-right: auto;">{{ message }}</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            </div>
+          </div>
+          <div class="col-md-6 pl-5">
+            <div class="row justify-content-end">
+              <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-12 text-right border-bottom mb-5">
+                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <span class="text-black">Subtotal</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">Rs. {{subtotal}}</strong>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <span class="text-black">GST &#40;18%&#41;</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">Rs. {{gst}}</strong>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <span class="text-black">Shipping</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-success">FREE</strong>
+                  </div>
+                </div>
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Total</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">Rs. {{grandtotal}}</strong>
+                  </div>
+                </div>
+                {% if discount!=0 %}
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Coupon discount</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-success">-Rs. {{discount}}</strong>
+                  </div>
+                </div>
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Total Payable</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">Rs. {{newtotal}}</strong>
+                  </div>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <button type="submit" form="checkout" class="btn btn-primary btn-lg py-3 btn-block">Proceed To Checkout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <footer class="site-footer border-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="row">
+              <div class="col-md-12">
+                <h3 class="footer-heading mb-4">Navigations</h3>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/shop">Shop</a></li>
+                  <li><a href="/about.html">About</a></li>
+                  
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/profile">Your Profile</a></li>
+                  <li><a href="/orders">Your Orders</a></li>
+                  <li><a href="/cart">Your Cart</a></li>
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li><a href="/login">Sign In</a></li>
+                  <li><a href="/register">Sign Up</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <h3 class="footer-heading mb-4">Promo</h3>
+            <a href="#" class="block-6">
+              <img src="static/images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+              <h3 class="font-weight-light  mb-0">Finding Your Perfect Groceries</h3>
+              <p>Promo from  August 15 &mdash; 25, 2023</p>
+              <p>Use code NEW10 on your first order!</p>
+            </a>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <strong><li class="name">Azfar Faheem Mustafa</li></strong>
+                <li class="address">203 Fake St. Mountain View, Mumbai, Maharashtra, India</li>
+                <li class="phone"><a href="tel://+917977573428">+91 7977573428</a></li>
+                <li class="email">21f2000478@ds.study.iitm.ac.in</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This HTML template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="static/js/jquery-3.3.1.min.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+  <script src="static/js/popper.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/owl.carousel.min.js"></script>
+  <script src="static/js/jquery.magnific-popup.min.js"></script>
+  <script src="static/js/aos.js"></script>
+
+  <script src="static/js/main.js"></script>
+    
+  </body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IntelliStore</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="static/css/aos.css">
+
+    <link rel="stylesheet" href="static/css/style.css">
+    
+  </head>
+  <body>
+  
+  <div class="site-wrap">
+    <header class="site-navbar" role="banner">
+      <div class="site-navbar-top">
+        <div class="container">
+          <div class="row align-items-center">
+
+            <div class="col-12 mb-3 mb-md-0 col-md-12 order-1 order-md-2 text-center">
+              <div class="site-logo">
+                <a href="/" class="js-logo-clone">IntelliStore</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div> 
+    
+      <div class="bg-light py-3">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12 mb-0"><a href="index.html"></a> <span class="mx-2 mb-0"></span> <strong class="text-black">SIGN UP</strong></div>
+          </div>
+        </div>
+      </div>
+    
+    <div class="site-section">
+      
+      <div class="container" style="align: center;">
+        
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+          <div class="col-md-6">
+
+            <form action="{{url_for('signuserup')}}" method="POST">
+              
+              <div class="p-3 p-lg-5 border">
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="firstname" class="text-black">Firstname<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="firstname" name="firstname" required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="lastname" class="text-black">Lastname<span class="text-danger"></span></label>
+                    <input type="text" class="form-control" id="lastname" name="lastname">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="username" class="text-black">Email &#40;This will be your username&#41;<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                  </div>
+                </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="pw" class="text-black">Password<span class="text-danger">*</span></label>
+                      <input type="password" class="form-control" id="pw" name="pw" required>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <label for="mobile" class="text-black">Mobile Number &#40;10 digit - Indian&#41;<span class="text-danger">*</span></label>
+                      <input type="text" pattern="[789][0-9]{9}" class="form-control" id="mobile" name="mobile" required>
+                    </div>
+                  </div>
+                <div class="form-group row">
+                  <div class="col-lg-12">
+                    <input type="submit" class="btn btn-primary btn-lg btn-block" value="Sign Up">
+                  </div>
+                  <a href="{{url_for('login')}}" style="margin-left: auto; margin-right: auto; margin-top:20px;"><button type="button" class="btn btn-link btn-sm">Already a User? Log in Now!</button></a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="col-md-5 ml-auto">
+            <div class="p-4 border mb-3">
+              <span class="d-block text-primary h6 text-uppercase" style="text-align: center;">Welcome to IntelliStore</span>
+              <img src="static/images/store.jpg" class="img-thumbnail" alt="Grocery store">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <footer class="site-footer border-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="footer-heading mb-4">Navigations</h3>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about.html">About</a></li>
+                
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/profile">Your Profile</a></li>
+                <li><a href="/orders">Your Orders</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="/login">Sign In</a></li>
+                <li><a href="/register">Sign Up</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-4">Promo</h3>
+          <a href="#" class="block-6">
+            <img src="static/images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+            <h3 class="font-weight-light  mb-0">Finding Your Perfect Groceries</h3>
+            <p>Promo from  August 15 &mdash; 25, 2023</p>
+            <p>Use code NEW10 on your first order!</p>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="block-5 mb-5">
+            <h3 class="footer-heading mb-4">Contact Info</h3>
+            <ul class="list-unstyled">
+              <strong><li class="name">Azfar Faheem Mustafa</li></strong>
+              <li class="address">203 Fake St. Mountain View, Mumbai, Maharashtra, India</li>
+              <li class="phone"><a href="tel://+917977573428">+91 7977573428</a></li>
+              <li class="email">21f2000478@ds.study.iitm.ac.in</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5 mt-5 text-center">
+        <div class="col-md-12">
+          <p>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This HTML template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="static/js/jquery-3.3.1.min.js"></script>
+  <script src="static/js/jquery-ui.js"></script>
+  <script src="static/js/popper.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/owl.carousel.min.js"></script>
+  <script src="static/js/jquery.magnific-popup.min.js"></script>
+  <script src="static/js/aos.js"></script>
+
+  <script src="static/js/main.js"></script>
+    
+  </body>
+</html>
